@@ -1,5 +1,6 @@
 if SERVER then
-    util.AddNetworkString( "ulx_particles" )
+    util.AddNetworkString( "ulx_particle" )
+    util.AddNetworkString( "ulx_particle_clear" )
 
     hook.Add( "PlayerInitalSpawn", "ulx_particles", function( ply )
         for _, ply in pairs(player.GetAll()) do
@@ -20,13 +21,39 @@ if CLIENT then
         game.AddParticles( "particles/" .. files[i] )
     end
 
+    -- If we're drawing the local player, we draw their particles too
+    local function drawOwnParticles()
+        if not LocalPlayer().ulx_particle then return end
+
+        if LocalPlayer():ShouldDrawLocalPlayer() then
+            ParticleEffectAttach( LocalPlayer().ulx_particle, PATTACH_POINT_FOLLOW, LocalPlayer(), LocalPlayer():LookupAttachment( "anim_attachment_head" ) )
+        else
+            LocalPlayer():StopParticleEmission()
+        end
+    end
+
     -- Net hooks
-    net.Receive( "ulx_particles", function()
+    net.Receive( "ulx_particle", function()
         local target = net.ReadEntity()
         local particle = net.ReadString()
         local attachment = target:LookupAttachment( "anim_attachment_head" )
         target:StopParticleEmission()
-        timer.Simple( 0, function() ParticleEffectAttach( particle, PATTACH_POINT_FOLLOW, target, attachment ) end )
+        ParticleEffectAttach( particle, PATTACH_POINT_FOLLOW, target, attachment )
+        target.ulx_particle = particle
+        if target == LocalPlayer() then
+            timer.Pause( "ulx_particles_self" )
+            timer.Simple( 1, function()
+                timer.Create( "ulx_particles_self", 0.25, 0, drawOwnParticles )
+            end )
+        end
+    end )
+
+    net.Receive( "ulx_particle_clear", function()
+        local target = net.ReadEntity()
+        target.ulx_particle = nil
+        if target == LocalPlayer() then
+            timer.Destroy( "ulx_particles_self" )
+        end
     end )
 end
 
@@ -45,12 +72,15 @@ end
 function ulx.particle( player, target, particle, should_remove )
     if should_remove then
         target:StopParticles()
+        net.Start( "ulx_particle_clear" )
+        net.WriteEntity( target )
+        net.Broadcast()
         ulx.fancyLogAdmin( player, "#A removed particles for #T.", target )
         return
     end
 
     target.ulx_particle = particle
-    net.Start( "ulx_particles" )
+    net.Start( "ulx_particle" )
     net.WriteEntity( target )
     net.WriteString( particle )
     net.Broadcast()
