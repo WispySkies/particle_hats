@@ -4,6 +4,9 @@ Timmy - steamcommunity.com/id/timmyws
 WispySkies - steamcommunity.com/id/WispySkies
 ]]--
 
+-- Base list of particles
+local particles = { "superrare_beams1", "superrare_burning1", "superrare_burning2", "superrare_confetti_green", "superrare_confetti_purple", "superrare_ghosts", "superrare_flies", "superrare_plasma1", "superrare_plasma2", "superrare_greenenergy", "superrare_purpleenergy", "unusual_storm", "unusual_blizzard", "unusual_smoking", "unusual_bubbles", "unusual_orbit_nutsnbolts", "unusual_orbit_fire", "unusual_orbit_fire_dark", "unusual_bubbles_green", "unusual_storm_knives", "unusual_storm_spooky", "unusual_storm_blood" }
+
 if SERVER then
     util.AddNetworkString( "ulx_particle" )
     util.AddNetworkString( "ulx_particle_clear" )
@@ -72,9 +75,6 @@ if CLIENT then
         end
     end )
 end
-
--- Base list of particles
-local particles = { "superrare_beams1", "superrare_burning1", "superrare_burning2", "superrare_confetti_green", "superrare_confetti_purple", "superrare_ghosts", "superrare_flies", "superrare_plasma1", "superrare_plasma2", "superrare_greenenergy", "superrare_purpleenergy", "unusual_storm", "unusual_blizzard", "unusual_smoking", "unusual_bubbles", "unusual_orbit_nutsnbolts", "unusual_orbit_fire", "unusual_orbit_fire_dark", "unusual_bubbles_green", "unusual_storm_knives", "unusual_storm_spooky", "unusual_storm_blood" }
 
 -- Precache particles to be used with !particle
 for i=1, #particles do
