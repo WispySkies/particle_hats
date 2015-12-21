@@ -54,6 +54,7 @@ if CLIENT then
 
     net.Receive( "ulx_particle_clear", function()
         local target = net.ReadEntity()
+        target:StopParticleEmission()
         target.ulx_particle = nil
         if target == LocalPlayer() then
             drawingSelf = false
@@ -76,7 +77,6 @@ end
 
 function ulx.particle( player, target, particle, should_remove )
     if should_remove then
-        target:StopParticles()
         net.Start( "ulx_particle_clear" )
         net.WriteEntity( target )
         net.Broadcast()
