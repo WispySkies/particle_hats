@@ -22,13 +22,16 @@ if CLIENT then
     end
 
     -- If we're drawing the local player, we draw their particles too
+    local drawingSelf = false
     local function drawOwnParticles()
         if not LocalPlayer().ulx_particle then return end
 
-        if LocalPlayer():ShouldDrawLocalPlayer() then
+        if LocalPlayer():ShouldDrawLocalPlayer() and not drawingSelf then
             ParticleEffectAttach( LocalPlayer().ulx_particle, PATTACH_POINT_FOLLOW, LocalPlayer(), LocalPlayer():LookupAttachment( "anim_attachment_head" ) )
-        else
+            drawingSelf = true
+        elseif not LocalPlayer():ShouldDrawLocalPlayer() and drawingSelf then
             LocalPlayer():StopParticleEmission()
+            drawingSelf = false
         end
     end
 
@@ -41,6 +44,7 @@ if CLIENT then
         ParticleEffectAttach( particle, PATTACH_POINT_FOLLOW, target, attachment )
         target.ulx_particle = particle
         if target == LocalPlayer() then
+            drawingSelf = true
             timer.Pause( "ulx_particles_self" )
             timer.Simple( 1, function()
                 timer.Create( "ulx_particles_self", 0.25, 0, drawOwnParticles )
@@ -52,6 +56,7 @@ if CLIENT then
         local target = net.ReadEntity()
         target.ulx_particle = nil
         if target == LocalPlayer() then
+            drawingSelf = false
             timer.Destroy( "ulx_particles_self" )
         end
     end )
