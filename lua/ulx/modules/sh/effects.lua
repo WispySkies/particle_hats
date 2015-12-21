@@ -1,3 +1,9 @@
+--[[
+Coded by:
+Timmy - steamcommunity.com/id/timmyws
+WispySkies - steamcommunity.com/id/WispySkies
+]]--
+
 if SERVER then
     util.AddNetworkString( "ulx_particle" )
     util.AddNetworkString( "ulx_particle_clear" )
@@ -12,6 +18,10 @@ if SERVER then
             end
         end
     end )
+
+    concommand.Add( "particles_print", function()
+        PrintTable( particles )
+    end )
 end
 
 if CLIENT then
@@ -23,7 +33,7 @@ if CLIENT then
 
     -- If we're drawing the local player, we draw their particles too
     local drawingSelf = false
-    local function drawOwnParticles()
+    local function drawOwnParticles() -- Clears particles from player view
         if not LocalPlayer().ulx_particle then return end
 
         if LocalPlayer():ShouldDrawLocalPlayer() and not drawingSelf then
@@ -63,14 +73,10 @@ if CLIENT then
     end )
 end
 
+-- Base list of particles
 local particles = { "superrare_beams1", "superrare_burning1", "superrare_burning2", "superrare_confetti_green", "superrare_confetti_purple", "superrare_ghosts", "superrare_flies", "superrare_plasma1", "superrare_plasma2", "superrare_greenenergy", "superrare_purpleenergy", "unusual_storm", "unusual_blizzard", "unusual_smoking", "unusual_bubbles", "unusual_orbit_nutsnbolts", "unusual_orbit_fire", "unusual_orbit_fire_dark", "unusual_bubbles_green", "unusual_storm_knives", "unusual_storm_spooky", "unusual_storm_blood" }
 
-if SERVER then
-    concommand.Add( "particlehats_print_particles", function()
-        PrintTable( particles )
-    end )
-end
-
+-- Precache particles to be used with !particle
 for i=1, #particles do
     PrecacheParticleSystem( particles[i] )
 end
@@ -90,7 +96,7 @@ function ulx.particle( player, target, particle, should_remove )
     net.WriteString( particle )
     net.Broadcast()
 
-    ulx.fancyLogAdmin( player, "#A gave #T the particle effects #s!", target, particle )
+    ulx.fancyLogAdmin( player, "#A enabled the particle effect #s on #T!", target, particle )
 end
 
 local particle = ulx.command( "Particle Effects", "ulx particle", ulx.particle, "!particle" )
@@ -98,5 +104,5 @@ particle:addParam{ type=ULib.cmds.PlayerArg }
 particle:addParam{ type=ULib.cmds.StringArg, completes=particles, error="Invalid particle! \"%s\" specified!", ULib.cmds.optional, ULib.cmds.restrictToCompletes }
 particle:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 particle:defaultAccess( ULib.ACCESS_ADMIN )
-particle:help( "Gives yourself/or a target, a tf2 particle hat effect." )
+particle:help( "\"Wears\" a hat with an effect from TF2." )
 particle:setOpposite( "ulx stopparticle", {_, _, _, true}, "!stopparticle" )
