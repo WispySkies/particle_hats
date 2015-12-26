@@ -81,6 +81,10 @@ for i=1, #particles do
     PrecacheParticleSystem( particles[i] )
 end
 
+-- "ConVar decides what access"
+local cvdwa = ULib.ACCESS_ADMIN
+if ConVar:GetInt( "particle_user_toggle" ) == 1 then cvdwa = ULib.ACCESS_ALL end
+
 function ulx.particle( player, target, particle, should_remove )
     if ConVar:GetInt( "particle_user_toggle" ) == 1 then target = player end
     if ConVar:GetInt( "particle_user_toggle" ) == 1 and player:IsAdmin() then target = target end
@@ -105,6 +109,6 @@ local particle = ulx.command( "Particle Effects", "ulx particle", ulx.particle, 
 particle:addParam{ type=ULib.cmds.PlayerArg }
 particle:addParam{ type=ULib.cmds.StringArg, completes=particles, error="Invalid particle! \"%s\" specified!", ULib.cmds.optional, ULib.cmds.restrictToCompletes }
 particle:addParam{ type=ULib.cmds.BoolArg, invisible=true }
-particle:defaultAccess( ULib.ACCESS_ADMIN )
+particle:defaultAccess( cvdwa )
 particle:help( "\"Wears\" a hat with an effect from TF2." )
 particle:setOpposite( "ulx stopparticle", {_, _, _, true}, "!stopparticle" )
