@@ -81,13 +81,8 @@ for i=1, #particles do
     PrecacheParticleSystem( particles[i] )
 end
 
--- "ConVar decides what access"
-local cvdwa = ULib.ACCESS_ADMIN
-if ConVar:GetInt( "particle_user_toggle" ) == 1 then cvdwa = ULib.ACCESS_ALL end
 
 function ulx.particle( player, target, particle, should_remove )
-    if ConVar:GetInt( "particle_user_toggle" ) == 1 then target = player end -- I'm Wispy, typing !particle Timmy unusual_orbit_fire_dark would still make me get the effects, no matter the target
-    if ConVar:GetInt( "particle_user_toggle" ) == 1 and player:IsAdmin() then target = target end
     if should_remove then
         net.Start( "ulx_particle_clear" )
         net.WriteEntity( target )
@@ -109,6 +104,6 @@ local particle = ulx.command( "Particle Effects", "ulx particle", ulx.particle, 
 particle:addParam{ type=ULib.cmds.PlayerArg }
 particle:addParam{ type=ULib.cmds.StringArg, completes=particles, error="Invalid particle! \"%s\" specified!", ULib.cmds.optional, ULib.cmds.restrictToCompletes }
 particle:addParam{ type=ULib.cmds.BoolArg, invisible=true }
-particle:defaultAccess( cvdwa )
+particle:defaultAccess( ULib.ACCESS_ADMIN )
 particle:help( "\"Wears\" a hat with an effect from TF2." )
 particle:setOpposite( "ulx stopparticle", {_, _, _, true}, "!stopparticle" )
