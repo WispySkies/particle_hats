@@ -97,7 +97,7 @@ function ulx.particle( player, target, particle, should_remove )
     net.WriteString( particle )
     net.Broadcast()
 
-    ulx.fancyLogAdmin( player, "#A enabled the particle effect #s on #T!", target, particle )
+    ulx.fancyLogAdmin( player, "#A enabled the particle effect #s on #T!", particle, target )
 end
 
 local particle = ulx.command( "Particle Effects", "ulx particle", ulx.particle, "!particle" )
