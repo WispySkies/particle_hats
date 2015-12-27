@@ -86,7 +86,7 @@ local cvdwa = ULib.ACCESS_ADMIN
 if ConVar:GetInt( "particle_user_toggle" ) == 1 then cvdwa = ULib.ACCESS_ALL end
 
 function ulx.particle( player, target, particle, should_remove )
-    if ConVar:GetInt( "particle_user_toggle" ) == 1 then target = player end
+    if ConVar:GetInt( "particle_user_toggle" ) == 1 then target = player end -- I'm Wispy, typing !particle Timmy unusual_orbit_fire_dark would still make me get the effects, no matter the target
     if ConVar:GetInt( "particle_user_toggle" ) == 1 and player:IsAdmin() then target = target end
     if should_remove then
         net.Start( "ulx_particle_clear" )
