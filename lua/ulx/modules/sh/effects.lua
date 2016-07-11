@@ -1,6 +1,6 @@
 --[[
 Coded by:
-Timmy - steamcommunity.com/id/timmyws
+Timmy - steamcommunity.com/id/ -URL was changed.
 WispySkies - steamcommunity.com/id/WispySkies
 ]]--
 
